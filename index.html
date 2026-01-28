@@ -2,226 +2,127 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="囚徒健身">
-    <meta name="description" content="基于《囚徒健身》的渐进式训练追踪应用，帮助你系统地进行自重训练">
-    
-    <title>囚徒健身追踪器</title>
-    
-    <!-- PWA -->
-    <link rel="manifest" href="./manifest.json">
-    <link rel="apple-touch-icon" href="./icons/icon-192.png">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="囚徒健身训练追踪应用 - 六艺十式，循序渐进">
+    <title>囚徒健身</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- 图标 -->
+    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💪</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💪</text></svg>">
+
     <!-- 样式 -->
-    <link rel="stylesheet" href="./css/style.css">
-    
-    <!-- 预连接 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="app">
-        <!-- 加载状态 -->
-        <div id="loading" class="loading-overlay hidden">
-            <div class="loading-spinner"></div>
-        </div>
-        
+
+    <!-- ========== 加载状态 ========== -->
+    <div id="appLoading" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p>加载中...</p>
+    </div>
+
+    <!-- ========== 主应用容器 ========== -->
+    <div id="app" class="app-container">
+
         <!-- ========== 首页 ========== -->
         <div id="home-page" class="page">
-            <header class="header">
-                <h1 class="logo">💪 囚徒健身</h1>
-                <p class="tagline">用自重训练打造强悍体魄</p>
-            </header>
-            
-            <main class="main-content">
-                <!-- 统计卡片 -->
-                <section class="stats-section">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value" id="totalDays">0</div>
-                            <div class="stat-label">训练天数</div>
-                        </div>
-                        <div class="stat-card highlight">
-                            <div class="stat-value" id="currentStreak">0</div>
-                            <div class="stat-label">🔥 连续天数</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="longestStreak">0</div>
-                            <div class="stat-label">最长连续</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="recoveryCount">0</div>
-                            <div class="stat-label">复活次数</div>
-                        </div>
-                    </div>
-                </section>
-                
-                <!-- 今日计划 -->
-                <section class="today-section">
-                    <h2 class="section-title">📅 今日计划</h2>
-                    <div class="today-plan" id="todayPlan">
-                        <!-- 动态渲染 -->
-                    </div>
-                </section>
-                
-                <!-- 动作卡片 -->
-                <section class="exercises-section">
-                    <h2 class="section-title">六大动作</h2>
-                    <div class="exercise-cards" id="exerciseCards">
-                        <!-- 动态渲染 -->
-                    </div>
-                </section>
-            </main>
+            <!-- 顶部统计卡片 -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalDays">0</div>
+                    <div class="stat-label">累计训练</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="currentStreak">0</div>
+                    <div class="stat-label">连续天数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="longestStreak">0</div>
+                    <div class="stat-label">最长连续</div>
+                </div>
+            </div>
+
+            <!-- 中断恢复提示横幅 -->
+            <div id="recoveryBanner" class="recovery-banner hidden"></div>
+
+            <!-- 今日计划 -->
+            <div class="section">
+                <h2 class="section-title">今日计划</h2>
+                <div id="todayPlan" class="today-plan"></div>
+            </div>
+
+            <!-- 六大动作卡片 -->
+            <div class="section">
+                <h2 class="section-title">六艺训练</h2>
+                <div id="exerciseCards" class="exercise-cards"></div>
+            </div>
         </div>
-        
+
         <!-- ========== 计划页 ========== -->
         <div id="plan-page" class="page hidden">
-            <header class="header">
-                <h1>📋 训练计划</h1>
-            </header>
-            
-            <main class="main-content">
-                <section class="plan-section">
-                    <p class="plan-intro">点击编辑每天的训练内容</p>
-                    <div class="weekly-plan" id="weeklyPlan">
-                        <!-- 动态渲染 -->
-                    </div>
-                </section>
-                
-                <section class="plan-tips">
-                    <h3>💡 计划建议</h3>
-                    <ul>
-                        <li>新手建议每周训练3-4天</li>
-                        <li>同一肌群至少间隔48小时</li>
-                        <li>推拉腿交替是不错的选择</li>
-                        <li>每周至少休息1-2天</li>
-                    </ul>
-                </section>
-            </main>
+            <div class="section">
+                <h2 class="section-title">每周计划</h2>
+                <div id="weeklyPlan" class="weekly-plan"></div>
+            </div>
         </div>
-        
+
         <!-- ========== 历史页 ========== -->
         <div id="history-page" class="page hidden">
-            <header class="header">
-                <h1>📊 训练历史</h1>
-            </header>
-            
-            <main class="main-content">
-                <!-- 日历 -->
-                <section class="calendar-section">
-                    <div class="calendar-header">
-                        <button class="calendar-nav" id="prevMonth">‹</button>
-                        <span class="calendar-month" id="calendarMonth">2024年1月</span>
-                        <button class="calendar-nav" id="nextMonth">›</button>
-                    </div>
-                    <div class="calendar-weekdays">
-                        <span>日</span>
-                        <span>一</span>
-                        <span>二</span>
-                        <span>三</span>
-                        <span>四</span>
-                        <span>五</span>
-                        <span>六</span>
-                    </div>
-                    <div class="calendar-grid" id="calendarGrid">
-                        <!-- 动态渲染 -->
-                    </div>
-                    <div class="calendar-legend">
-                        <span class="legend-item"><span class="dot completed"></span>完成</span>
-                        <span class="legend-item"><span class="dot partial"></span>部分</span>
-                        <span class="legend-item"><span class="dot skipped"></span>跳过</span>
-                    </div>
-                </section>
-                
-                <!-- 最近记录 -->
-                <section class="recent-section">
-                    <h2 class="section-title">最近记录</h2>
-                    <div class="recent-logs" id="recentLogs">
-                        <!-- 动态渲染 -->
-                    </div>
-                </section>
-            </main>
+            <!-- 日历 -->
+            <div class="section">
+                <h2 class="section-title" id="calendarMonth">2026年1月</h2>
+                <div id="calendarGrid" class="calendar-grid"></div>
+            </div>
+
+            <!-- 最近记录 -->
+            <div class="section">
+                <h2 class="section-title">最近训练</h2>
+                <div id="recentLogs" class="recent-logs"></div>
+            </div>
         </div>
-        
+
         <!-- ========== 个人页 ========== -->
         <div id="profile-page" class="page hidden">
-            <header class="header">
-                <h1>⚙️ 设置</h1>
-            </header>
-            
-            <main class="main-content">
-                <!-- 个人统计 -->
-                <section class="profile-stats">
-                    <div class="profile-stat">
-                        <span class="profile-stat-value" id="profileTotalDays">0</span>
-                        <span class="profile-stat-label">总训练天数</span>
+            <div class="section">
+                <h2 class="section-title">我的成就</h2>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value" id="profileTotalDays">0</div>
+                        <div class="stat-label">总训练天数</div>
                     </div>
-                    <div class="profile-stat">
-                        <span class="profile-stat-value" id="profileStreak">0</span>
-                        <span class="profile-stat-label">当前连续</span>
+                    <div class="stat-card">
+                        <div class="stat-value" id="profileStreak">0</div>
+                        <div class="stat-label">当前连续</div>
                     </div>
-                    <div class="profile-stat">
-                        <span class="profile-stat-value" id="profileRecovery">0</span>
-                        <span class="profile-stat-label">复活次数</span>
+                    <div class="stat-card">
+                        <div class="stat-value" id="profileRecovery">0</div>
+                        <div class="stat-label">复活次数</div>
                     </div>
-                </section>
-                
-                <!-- 设置列表 -->
-                <section class="settings-section">
-                    <h2 class="section-title">通知设置</h2>
-                    <div class="settings-list">
-                        <div class="setting-item">
-                            <div class="setting-info">
-                                <span class="setting-name">训练提醒</span>
-                                <span class="setting-desc">智能分析你的训练时间并提醒</span>
-                            </div>
-                            <label class="toggle">
-                                <input type="checkbox" id="notificationToggle">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
+                </div>
+            </div>
+
+            <!-- 设置 -->
+            <div class="section">
+                <h2 class="section-title">设置</h2>
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <span>训练提醒</span>
+                        <label class="switch">
+                            <input type="checkbox" id="notificationSwitch">
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                </section>
-                
-                <section class="settings-section">
-                    <h2 class="section-title">数据管理</h2>
-                    <div class="settings-list">
-                        <button class="setting-btn" id="exportDataBtn">
-                            <span class="setting-icon">📤</span>
-                            <span class="setting-name">导出数据</span>
-                        </button>
-                        <button class="setting-btn" id="importDataBtn">
-                            <span class="setting-icon">📥</span>
-                            <span class="setting-name">导入数据</span>
-                        </button>
-                        <button class="setting-btn" id="exportReportBtn">
-                            <span class="setting-icon">📊</span>
-                            <span class="setting-name">导出周报</span>
-                        </button>
-                        <button class="setting-btn" id="emailShareBtn">
-                            <span class="setting-icon">📧</span>
-                            <span class="setting-name">邮件分享</span>
-                        </button>
-                        <button class="setting-btn danger" id="clearDataBtn">
-                            <span class="setting-icon">🗑️</span>
-                            <span class="setting-name">清除所有数据</span>
-                        </button>
-                    </div>
-                </section>
-                
-                <section class="about-section">
-                    <h2 class="section-title">关于</h2>
-                    <div class="about-content">
-                        <p>囚徒健身追踪器 v1.0.0</p>
-                        <p>基于Paul Wade《囚徒健身》</p>
-                        <p class="copyright">数据存储在本地，隐私安全</p>
-                    </div>
-                </section>
-            </main>
+                    <button id="exportDataBtn" class="setting-btn">导出数据</button>
+                    <button id="importDataBtn" class="setting-btn">导入数据</button>
+                    <button id="clearDataBtn" class="setting-btn danger">清空所有数据</button>
+                </div>
+            </div>
         </div>
-        
+
         <!-- ========== 底部导航 ========== -->
         <nav class="bottom-nav">
             <div class="nav-item active" data-page="home">
@@ -229,7 +130,7 @@
                 <span class="nav-label">首页</span>
             </div>
             <div class="nav-item" data-page="plan">
-                <span class="nav-icon">📋</span>
+                <span class="nav-icon">📅</span>
                 <span class="nav-label">计划</span>
             </div>
             <div class="nav-item" data-page="history">
@@ -237,61 +138,148 @@
                 <span class="nav-label">历史</span>
             </div>
             <div class="nav-item" data-page="profile">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-label">设置</span>
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">我的</span>
             </div>
         </nav>
-        
-        <!-- ========== 弹窗 ========== -->
-        
-        <!-- 动作详情弹窗 -->
-        <div id="exerciseModal" class="modal-overlay hidden">
-            <div class="modal">
-                <div class="modal-header"></div>
-                <div class="modal-body"></div>
-                <div class="modal-footer"></div>
-            </div>
-        </div>
-        
-        <!-- 训练记录弹窗 -->
-        <div id="workoutModal" class="modal-overlay hidden">
-            <div class="modal">
-                <div class="modal-header"></div>
-                <div class="modal-body"></div>
-                <div class="modal-footer"></div>
-            </div>
-        </div>
-        
-        <!-- 通用确认弹窗 -->
-        <div id="confirmModal" class="modal-overlay hidden">
-            <div class="modal modal-sm">
-                <div class="modal-body"></div>
-                <div class="modal-footer"></div>
-            </div>
-        </div>
-        
-        <!-- Toast提示 -->
-        <div id="toast" class="toast hidden"></div>
     </div>
-    
-    <!-- 脚本 -->
-    <script src="./js/utils.js"></script>
-    <script src="./js/db.js"></script>
-    <script src="./js/exercises.js"></script>
-    <script src="./js/progression.js"></script>
-    <script src="./js/notification.js"></script>
-    <script src="./js/email-backup.js"></script>
-    <script src="./js/app.js"></script>
-    
-    <!-- 注册Service Worker -->
+
+    <!-- ========== 首次设置弹窗 ========== -->
+    <div id="setupModal" class="modal hidden">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>欢迎使用囚徒健身</h2>
+                <p class="text-muted">请选择每个动作的当前等级（1-10式）</p>
+            </div>
+            <div class="modal-body" id="setupGrid"></div>
+            <div class="modal-footer">
+                <button id="btnFinishSetup" class="btn btn-primary full-width">完成设置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 动作详情弹窗 ========== -->
+    <div id="exerciseModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="closeExerciseModal" class="close-btn">×</button>
+                <div class="detail-header-content"></div>
+            </div>
+            <div class="modal-body detail-body">
+                <!-- 训练标准 -->
+                <div id="exerciseStandards"></div>
+
+                <!-- 等级切换按钮 -->
+                <button id="btnOpenLevelSelect" class="btn btn-secondary full-width" style="margin:15px 0;">
+                    切换等级
+                </button>
+
+                <!-- 今日已完成记录 -->
+                <div id="todayLogsList" style="margin:15px 0;"></div>
+
+                <!-- 训练记录表单 -->
+                <div class="workout-logger">
+                    <h3>记录本次训练</h3>
+
+                    <!-- 次数输入 -->
+                    <div class="input-group">
+                        <label>完成次数</label>
+                        <div class="counter">
+                            <button id="btnMinus" class="counter-btn">-</button>
+                            <input type="number" id="inputReps" value="10" min="1" class="counter-input">
+                            <button id="btnPlus" class="counter-btn">+</button>
+                        </div>
+                    </div>
+
+                    <!-- 组数输入 -->
+                    <div class="input-group">
+                        <label>组数</label>
+                        <input type="number" id="inputSets" value="1" min="1" class="input-field">
+                    </div>
+
+                    <!-- 训练感受 -->
+                    <div class="input-group">
+                        <label>训练感受</label>
+                        <div class="feeling-options">
+                            <label class="feeling-option">
+                                <input type="radio" name="feeling" value="easy">
+                                <span>😊 轻松</span>
+                            </label>
+                            <label class="feeling-option">
+                                <input type="radio" name="feeling" value="moderate">
+                                <span>😐 适中</span>
+                            </label>
+                            <label class="feeling-option">
+                                <input type="radio" name="feeling" value="hard">
+                                <span>😰 困难</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 备注 -->
+                    <div class="input-group">
+                        <label>备注（可选）</label>
+                        <textarea id="inputNote" placeholder="记录一些想法..." rows="2" class="input-field"></textarea>
+                    </div>
+
+                    <button id="btnSaveLog" class="btn btn-primary full-width">完成并保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 等级选择弹窗 ========== -->
+    <div id="levelSelectModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="closeLevelModal" class="close-btn">×</button>
+                <h2>选择训练等级</h2>
+            </div>
+            <div class="modal-body">
+                <div id="levelGridOptions" style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 编辑日期计划弹窗 ========== -->
+    <div id="editDayModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button id="closeEditDayModal" class="close-btn">×</button>
+                <h2 id="editDayTitle">编辑计划</h2>
+            </div>
+            <div class="modal-body">
+                <div id="exerciseSelectGrid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnSaveDayPlan" class="btn btn-primary full-width">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== Toast 提示 ========== -->
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- ========== 脚本加载顺序很重要 ========== -->
+    <script src="js/utils.js"></script>
+    <script src="js/exercises.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Service Worker 注册 -->
     <script>
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW registered:', reg.scope))
-                    .catch(err => console.error('SW registration failed:', err));
-            });
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('Service Worker 注册成功'))
+                .catch(err => console.log('Service Worker 注册失败:', err));
         }
+
+        // 隐藏加载屏幕
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('appLoading')?.classList.add('hidden');
+            }, 500);
+        });
     </script>
 </body>
 </html>
